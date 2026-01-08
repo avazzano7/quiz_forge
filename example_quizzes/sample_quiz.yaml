@@ -1,0 +1,19 @@
+title: "Intro to Biology Quiz"
+questions:
+  - id: 1
+    question: "What is the powerhouse of the cell?"
+    choices:
+      - "Nucleus"
+      - "Mitochondria"
+      - "Ribosome"
+      - "Golgi apparatus"
+    correct_answer: 1
+
+  - id: 2
+    question: "DNA stands for?"
+    choices:
+      - "Deoxyribonucleic Acid"
+      - "Dinucleic Acid"
+      - "Ribonucleic Acid"
+      - "None of the above"
+    correct_answer: 0
