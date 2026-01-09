@@ -35,9 +35,14 @@ class AnswerResponse(BaseModel):
     correct: bool
 
 
+class ScoreResponse(BaseModel):
+    score: int
+    total: int
+
+
 @router.post("/load", response_model=LoadQuizResponse)
 def load_quiz(request: LoadQuizRequest):
-    global _loaded_quiz
+    global _loaded_quiz, _user_answers
 
     try:
         quiz = load_quiz_from_yaml(request.path)
@@ -45,6 +50,7 @@ def load_quiz(request: LoadQuizRequest):
         raise HTTPException(status_code=400, detail=str(e))
     
     _loaded_quiz = quiz
+    _user_answers = {}
 
     return LoadQuizResponse(
         title=quiz.title,
@@ -104,4 +110,24 @@ def submit_answer(request: AnswerRequest):
 
     return AnswerResponse(
         correct=request.choice_index == question.correct_answer
+    )
+
+
+@router.get("/score", response_model=ScoreResponse)
+def get_score():
+    if _loaded_quiz is None:
+        raise HTTPException(
+            status_code=400,
+            detail="No quiz loaded. Please load a quiz first."
+        )
+    
+    score = sum(
+        1
+        for q in _loaded_quiz.questions
+        if _user_answers.get(q.id) == q.correct_answer
+    )
+
+    return ScoreResponse(
+        score=score,
+        total=len(_loaded_quiz.questions)
     )
