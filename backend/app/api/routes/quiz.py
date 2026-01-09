@@ -48,7 +48,7 @@ def load_quiz(request: LoadQuizRequest):
         quiz = load_quiz_from_yaml(request.path)
     except QuizLoadError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     _loaded_quiz = quiz
     _user_answers = {}
 
@@ -65,13 +65,13 @@ def get_question(index: int):
             status_code=400,
             detail="No quiz loaded. Please load a quiz first."
         )
-    
+
     if index < 0 or index >= len(_loaded_quiz.questions):
         raise HTTPException(
             status_code=404,
             detail="Question index out of range."
         )
-    
+
     q = _loaded_quiz.questions[index]
 
     return QuestionResponse(
@@ -88,7 +88,7 @@ def submit_answer(request: AnswerRequest):
             status_code=400,
             detail="No quiz loaded. Please load a quiz first."
         )
-    
+
     question = next(
         (q for q in _loaded_quiz.questions if q.id == request.question_id),
         None
@@ -99,13 +99,13 @@ def submit_answer(request: AnswerRequest):
             status_code=404,
             detail="Question ID not found in the loaded quiz."
         )
-    
+
     if request.choice_index < 0 or request.choice_index >= len(question.choices):
         raise HTTPException(
             status_code=400,
             detail="Choice index out of range."
         )
-    
+
     _user_answers[question.id] = request.choice_index
 
     return AnswerResponse(
@@ -120,7 +120,7 @@ def get_score():
             status_code=400,
             detail="No quiz loaded. Please load a quiz first."
         )
-    
+
     score = sum(
         1
         for q in _loaded_quiz.questions
